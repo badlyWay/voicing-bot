@@ -1,0 +1,15 @@
+{
+  "name": "voicing-bot",
+  "version": "1.0.0",
+  "description": "Telegram bot for voicing the articles.",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "start": "node --env-file=.env index.js"
+  },
+  "author": "V. Zyshchuk",
+  "license": "ISC",
+  "dependencies": {
+    "node-telegram-bot-api": "^0.64.0"
+  }
+}
