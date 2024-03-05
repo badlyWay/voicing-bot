@@ -1,0 +1,11 @@
+{
+  "name": "voicer",
+  "version": "1.0.0",
+  "description": "Voicing service",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "V. Zyshchuk",
+  "license": "ISC"
+}

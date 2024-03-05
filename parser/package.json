@@ -1,0 +1,12 @@
+{
+  "name": "parser",
+  "version": "0.0.1",
+  "description": "Parse microservice",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "start": "npm start"
+  },
+  "author": "V. Zyshchuk",
+  "license": "ISC"
+}
