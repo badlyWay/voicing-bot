@@ -1,4 +1,4 @@
-version: "3.8"
+version: "2"
 services:
   kafdrop:
     image: obsidiandynamics/kafdrop
@@ -24,16 +24,46 @@ services:
       KAFKA_RESTART_ATTEMPTS: "10"
       KAFKA_RESTART_DELAY: "5"
       ZOOKEEPER_AUTOPURGE_PURGE_INTERVAL: "0"
-  backend:
-    image: nodejs
-    container_name: voicing_bot_backend
+  bot_service:
+    container_name: bot_service
     restart: unless-stopped
-    env_file: .env
+    env_file: ./bot/.env
     build:
-      context: .
+      context: ./bot/.
       dockerfile: Dockerfile
     volumes:
-      - .:/usr/app/
+      - bot:/usr/app
       - /usr/app/node_modules
     ports:
       - "8000:8000"
+      
+  parser_service:
+    container_name: parser_service
+    restart: unless-stopped
+    env_file: ./parser/.env
+    build:
+      context: ./parser/.
+      dockerfile: Dockerfile
+    volumes:
+      - parser:/usr/app
+      - /usr/app/node_modules
+    ports:
+      - "8001:8001"
+
+  voicer_service:
+    container_name: voicer_service
+    restart: unless-stopped
+    env_file: ./voicer/.env
+    build:
+      context: ./voicer/.
+      dockerfile: Dockerfile
+    volumes:
+      - voicer:/usr/app
+      - /usr/app/node_modules
+    ports:
+      - "8002:8002"
+
+volumes:
+  bot:
+  parser:
+  voicer:
