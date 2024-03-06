@@ -1,4 +1,4 @@
-version: "3.8"
+version: "2"
 services:
   kafdrop:
     image: obsidiandynamics/kafdrop
@@ -25,7 +25,6 @@ services:
       KAFKA_RESTART_DELAY: "5"
       ZOOKEEPER_AUTOPURGE_PURGE_INTERVAL: "0"
   bot_service:
-    image: nodejs
     container_name: bot_service
     restart: unless-stopped
     env_file: ./bot/.env
@@ -36,10 +35,9 @@ services:
       - bot:/usr/app
       - /usr/app/node_modules
     ports:
-      - "8000:8000"  
+      - "8000:8000"
       
   parser_service:
-    image: nodejs
     container_name: parser_service
     restart: unless-stopped
     env_file: ./parser/.env
@@ -53,7 +51,6 @@ services:
       - "8001:8001"
 
   voicer_service:
-    image: nodejs
     container_name: voicer_service
     restart: unless-stopped
     env_file: ./voicer/.env
@@ -65,3 +62,8 @@ services:
       - /usr/app/node_modules
     ports:
       - "8002:8002"
+
+volumes:
+  bot:
+  parser:
+  voicer:

@@ -4,8 +4,12 @@
   "description": "Voicing service",
   "main": "index.js",
   "scripts": {
+    "start": "node --env-file=.env index.js",
     "test": "test"
   },
   "author": "V. Zyshchuk",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "kafkajs": "^2.2.4"
+  }
 }

@@ -5,8 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "test",
-    "start": "npm start"
+    "start": "node --env-file=.env index.js"
   },
   "author": "V. Zyshchuk",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "kafkajs": "^2.2.4"
+  }
 }
