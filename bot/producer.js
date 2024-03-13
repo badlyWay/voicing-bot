@@ -1,4 +1,4 @@
-const { Partitioners } = require('kafkajs')
+const { Partitioners } = require("kafkajs")
 const { kafka } = require("./kafka");
 const producer = kafka.producer({ createPartitioner: Partitioners.LegacyPartitioner });
 
@@ -11,7 +11,7 @@ const sendMessage = async (message) => {
                 value: JSON.stringify(message),
             }
         ]
-    })
+    });
     await producer.disconnect();
 }
 

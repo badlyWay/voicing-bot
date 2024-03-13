@@ -8,7 +8,7 @@ const initConsumer = async (bot) => {
         await consumer.subscribe({
             topic: process.env.VOICER_TOPIC,
             fromBeginning: true,
-        })
+        });
         await consumer.run({
             eachMessage: async ({ message }) => {
                 const { chatId, audio, articleTitle } = JSON.parse(message.value);
@@ -18,14 +18,14 @@ const initConsumer = async (bot) => {
 
                     await bot.sendAudio(chatId, stream, {}, {
                         filename: articleTitle,
-                        contentType: 'audio/mpeg',
+                        contentType: "audio/mpeg",
                     });
                 }
                 else {
-                    throw new Error('Не удалось сгенерировать озвучку.');
+                    throw new Error("Не удалось сгенерировать озвучку.");
                 }
             }
-        })
+        });
     } catch (error) {
         await bot.sendMessage("Ошибка: ", error);
         console.log(error);
