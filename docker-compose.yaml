@@ -28,38 +28,45 @@ services:
     container_name: bot_service
     restart: unless-stopped
     env_file: ./bot/.env
+    environment:
+      - KAFKA_API=kafka:29092
     build:
-      context: ./bot/.
+      context: ./bot
       dockerfile: Dockerfile
     volumes:
-      - bot:/usr/app
-      - /usr/app/node_modules
+      - bot:/app
+      - /app/node_modules
     ports:
       - "8000:8000"
-      
   parser_service:
     container_name: parser_service
     restart: unless-stopped
     env_file: ./parser/.env
+    environment:
+      - KAFKA_API=kafka:29092
     build:
-      context: ./parser/.
+      context: ./parser
       dockerfile: Dockerfile
     volumes:
-      - parser:/usr/app
-      - /usr/app/node_modules
+      - parser:/app
+      - /app/node_modules
     ports:
       - "8001:8001"
-
   voicer_service:
     container_name: voicer_service
     restart: unless-stopped
     env_file: ./voicer/.env
+    environment:
+      - KAFKA_API=kafka:29092
     build:
-      context: ./voicer/.
+      context: ./voicer
       dockerfile: Dockerfile
+    depends_on:
+      - "kafka"
+      - "kafdrop"
     volumes:
-      - voicer:/usr/app
-      - /usr/app/node_modules
+      - voicer:/app
+      - /app/node_modules
     ports:
       - "8002:8002"
 
