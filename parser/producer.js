@@ -1,6 +1,6 @@
+const { Partitioners } = require('kafkajs');
 const { kafka } = require("./kafka");
-
-const producer = kafka.producer();
+const producer = kafka.producer({ createPartitioner: Partitioners.LegacyPartitioner });
 
 const sendMessage = async (message) => {
     await producer.connect();
