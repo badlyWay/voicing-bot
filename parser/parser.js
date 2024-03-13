@@ -4,11 +4,11 @@ const { sendMessage } = require("./producer");
 
 const handlePageParse = async ({ chatId, url }) => {
     const { body } = await fetch(url);
-    const articleContent = parsePage(body);
 
     sendMessage({
         chatId,
-        pageText: articleContent,
+        pageText: parse(body).querySelector('article').textContent,
+        articleTitle: parse(body).querySelector('h1').textContent,
     });
 };
 
@@ -36,10 +36,6 @@ const fetch = (url) => new Promise((resolve, reject) => {
     });
     request.end();
 });
-
-const parsePage = (pageHTML) => {
-    return parse(pageHTML).querySelector('article').textContent;
-}
 
 module.exports = {
     handlePageParse
