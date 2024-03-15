@@ -3,15 +3,19 @@ const { parse } = require("node-html-parser");
 const { sendMessage } = require("./producer");
 
 const handlePageParse = async ({ chatId, url }) => {
-    const body = await fetch(url);
-    const page = parse(body);
+    try {
+        const body = await fetch(url);
+        const page = parse(body);
 
-    sendMessage({
-        chatId,
-        pageText: page.querySelector("article").textContent,
-        articleTitle: page.querySelector("h1").textContent,
-        language: page.querySelector("html").lang,
-    });
+        sendMessage({
+            chatId,
+            pageText: page.querySelector("article").textContent,
+            articleTitle: page.querySelector("h1").textContent,
+            language: page.querySelector("html").lang,
+        });
+    } catch (error) {
+        console.error(error);
+    }
 };
 
 const fetch = (url) => new Promise((resolve, reject) => {

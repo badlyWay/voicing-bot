@@ -1,5 +1,5 @@
-const fs = require("node:fs");
 const { kafka } = require("./kafka");
+const { supabaseApi } = require("./supabase");
 const consumer = kafka.consumer({ groupId: process.env.BOT_CONSUMER });
 
 const initConsumer = async (bot) => {
@@ -11,15 +11,21 @@ const initConsumer = async (bot) => {
         });
         await consumer.run({
             eachMessage: async ({ message }) => {
-                const { chatId, audio, articleTitle } = JSON.parse(message.value);
+                const { chatId, audioName, articleTitle } = JSON.parse(message.value);
+                if (audioName) {
+                    const bucket = process.env.STORAGE_BUCKET;
+                    const { data, error } = await supabaseApi.storage.from(bucket).download(audioName);
 
-                if (audio) {
-                    const stream = await fs.createReadStream(audio);
+                    if (error) throw new Error("Ошибка поиска: ", error);
 
-                    await bot.sendAudio(chatId, stream, {}, {
-                        filename: articleTitle,
-                        contentType: "audio/mpeg",
+                    const blob = await data.arrayBuffer();
+                    const bufferData = Buffer.from(blob);
+
+                    await bot.sendAudio(chatId, bufferData, {}, {
+                        filename: articleTitle + ".mp3",
+                        contentType: process.env.AUDIO_DATA_FORMAT,
                     });
+                    await supabaseApi.storage.from(bucket).remove([audioName]);
                 }
                 else {
                     throw new Error("Не удалось сгенерировать озвучку.");
