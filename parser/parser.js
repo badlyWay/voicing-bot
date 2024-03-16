@@ -1,13 +1,13 @@
 const https = require("node:https");
 const { parse } = require("node-html-parser");
-const { sendMessage } = require("./producer");
+const kafka = require("./kafka");
 
 const handlePageParse = async ({ chatId, url }) => {
     try {
         const body = await fetch(url);
         const page = parse(body);
 
-        sendMessage(process.env.BUFFER_TOPIC, {
+        kafka.sendMessage(process.env.BUFFER_TOPIC, {
             chatId,
             pageText: page.querySelector("article").textContent,
             articleTitle: page.querySelector("h1").textContent,

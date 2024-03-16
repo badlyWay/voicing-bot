@@ -1,6 +1,6 @@
 const fs = require("node:fs");
 const path = require("node:path");
-const { sendMessage } = require("./producer");
+const kafka = require("./kafka");
 const { createAudioFile } = require("simple-tts-mp3");
 const { supabaseApi } = require("./supabase");
 
@@ -9,13 +9,13 @@ const handleVocing = async ({ chatId, pageText, articleTitle, language }) => {
         const localFilePath = await createFile(pageText, articleTitle, language);
         const audioName = await uploadFile(localFilePath);
 
-        sendMessage(process.env.VOICER_TOPIC, {
+        kafka.sendMessage(process.env.VOICER_TOPIC, {
             chatId,
             articleTitle,
             audioName,
         });
     } catch (error) {
-        sendMessage(process.env.ERROR_TOPIC, {
+        kafka.sendMessage(process.env.ERROR_TOPIC, {
             chatId,
             error
         });
