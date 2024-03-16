@@ -1,3 +1,3 @@
-const { initConsumer } = require("./consumer");
+const kafka = require("./kafka");
 
-initConsumer();
+kafka.initConsumer();
