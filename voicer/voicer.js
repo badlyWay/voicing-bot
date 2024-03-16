@@ -5,14 +5,21 @@ const { createAudioFile } = require("simple-tts-mp3");
 const { supabaseApi } = require("./supabase");
 
 const handleVocing = async ({ chatId, pageText, articleTitle, language }) => {
-    const localFilePath = await createFile(pageText, String(chatId), language);
-    const fileName = await uploadFile(localFilePath);
+    try {
+        const localFilePath = await createFile(pageText, articleTitle, language);
+        const audioName = await uploadFile(localFilePath);
 
-    sendMessage({
-        chatId,
-        articleTitle,
-        audioName: fileName,
-    });
+        sendMessage(process.env.VOICER_TOPIC, {
+            chatId,
+            articleTitle,
+            audioName,
+        });
+    } catch (error) {
+        sendMessage(process.env.ERROR_TOPIC, {
+            chatId,
+            error
+        });
+    }
 };
 
 const createFile = async (text, fileName, language) => {
@@ -31,35 +38,31 @@ const generateFilePath = (fileName) => {
     return path.join(dirPath, fileName);
 };
 
-const uploadFile = async (localFilePath) => {
-    try {
-        const stream = fs.createReadStream(localFilePath);
-        const fileName = path.basename(localFilePath);
-        const data = [];
+const uploadFile = (localFilePath) => new Promise((resolve, reject) => {
+    const stream = fs.createReadStream(localFilePath);
+    const fileName = path.basename(localFilePath);
+    const data = [];
 
-        stream.on('data', chunk => {
-            data.push(chunk);
-        })
-        stream.on('error', error => {
-            throw new Error(error)
-        })
-        stream.on('end', async () => {
-            const bucket = process.env.STORAGE_BUCKET;
-            const { error } = await supabaseApi.storage
-                .from(bucket).upload(
-                    fileName,
-                    new Blob(data),
-                    { contentType: "Blob" }
-                );
+    stream.on('data', chunk => {
+        data.push(chunk);
+    });
+    stream.on('error', error => {
+        reject(new Error(error));
+    });
+    stream.on('end', async () => {
+        const bucket = process.env.STORAGE_BUCKET;
+        const { error } = await supabaseApi.storage
+            .from(bucket).upload(
+                fileName,
+                new Blob(data),
+                { contentType: "Blob" }
+            );
 
-            if (error) throw new Error("Ошибка загрузки: ", error);
-        });
+        if (error) reject(new Error("Ошибка загрузки: ", error));
+    });
 
-        return fileName;
-    } catch (error) {
-        console.error(error);
-    }
-}
+    resolve(fileName);
+});
 
 module.exports = {
     handleVocing

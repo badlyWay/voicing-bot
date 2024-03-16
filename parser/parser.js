@@ -7,14 +7,17 @@ const handlePageParse = async ({ chatId, url }) => {
         const body = await fetch(url);
         const page = parse(body);
 
-        sendMessage({
+        sendMessage(process.env.BUFFER_TOPIC, {
             chatId,
             pageText: page.querySelector("article").textContent,
             articleTitle: page.querySelector("h1").textContent,
             language: page.querySelector("html").lang,
         });
     } catch (error) {
-        console.error(error);
+        sendMessage(process.env.ERROR_TOPIC, {
+            chatId,
+            error
+        });
     }
 };
 
