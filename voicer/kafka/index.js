@@ -1,5 +1,4 @@
-const { Kafka } = require("kafkajs");
-const { handleVocing } = require("../voicer");
+const { Kafka, Partitioners } = require("kafkajs");
 
 const kafka = new Kafka({
     clientId: process.env.SERVICE_ID,
@@ -8,7 +7,11 @@ const kafka = new Kafka({
 
 const consumer = kafka.consumer({ groupId: process.env.VOICE_CONSUMER });
 
-const initConsumer = async () => {
+/** sendMessage function args
+ * @param {function(params)} callback - callback function
+ */
+
+const initConsumer = async (callback) => {
     try {
         await consumer.connect();
         await consumer.subscribe({
@@ -17,7 +20,7 @@ const initConsumer = async () => {
         })
         await consumer.run({
             eachMessage: async ({ message }) => {
-                handleVocing(JSON.parse(message.value));
+                callback(JSON.parse(message.value));
             }
         })
     } catch (error) {
@@ -26,6 +29,11 @@ const initConsumer = async () => {
 };
 
 const producer = kafka.producer({ createPartitioner: Partitioners.LegacyPartitioner });
+
+/** sendMessage function args
+ * @param {string} topic - kafka topic name
+ * @param {Object} message - message object
+ */
 
 const sendMessage = async (topic, message) => {
     await producer.connect();
