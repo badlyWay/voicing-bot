@@ -1,6 +1,6 @@
 {
   "name": "voicer",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Voicing service",
   "main": "index.js",
   "scripts": {

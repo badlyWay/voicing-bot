@@ -1,6 +1,6 @@
 {
   "name": "voicing-bot",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Telegram bot for voicing the articles.",
   "main": "index.js",
   "scripts": {
