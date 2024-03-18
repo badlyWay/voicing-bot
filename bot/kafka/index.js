@@ -1,6 +1,5 @@
-const { Kafka } = require("kafkajs");
-const TelegramBot = require("node-telegram-bot-api");
-const { Partitioners } = require("kafkajs");
+const { Kafka, Partitioners } = require("kafkajs");
+const TelegramBot = require("node-telegram-bot-api")
 const { supabaseApi } = require("../supabase");
 
 const kafka = new Kafka({
@@ -34,8 +33,8 @@ const topicsRouter = {
     },
     [process.env.ERROR_TOPIC]: async (bot, message) => {
         const { chatId, error } = JSON.parse(message.value);
-
-        await bot.sendMessage(chatId, error);
+        console.error(error);
+        await bot.sendMessage(chatId, error + "\nпопробуйте снова...");
     },
 };
 
@@ -49,7 +48,7 @@ const initConsumer = async (bot) => {
         await consumer.subscribe({
             topics: [
                 process.env.VOICER_TOPIC,
-                process.env.ERROR_TOPIC
+                process.env.ERROR_TOPIC,
             ],
             fromBeginning: true,
         });
@@ -62,6 +61,14 @@ const initConsumer = async (bot) => {
 };
 
 const producer = kafka.producer({ createPartitioner: Partitioners.LegacyPartitioner });
+
+
+
+/** sendMessage function args
+ * @param {Object} message
+ * @param {string} message.chatId - tg chat id
+ * @param {string} message.url - page url for parse
+ */
 
 const sendMessage = async (message) => {
     await producer.connect();

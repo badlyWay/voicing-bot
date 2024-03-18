@@ -1,5 +1,4 @@
 const { Kafka, Partitioners } = require("kafkajs");
-const { handlePageParse } = require("../parser");
 
 const kafka = new Kafka({
     clientId: process.env.SERVICE_ID,
@@ -8,13 +7,17 @@ const kafka = new Kafka({
 
 const consumer = kafka.consumer({ groupId: process.env.PARSE_CONSUMER });
 
-const initConsumer = async () => {
+/** sendMessage function args
+ * @param {function(params)} callback - callback function
+ */
+
+const initConsumer = async (callback) => {
     try {
         await consumer.connect();
         await consumer.subscribe({ topic: process.env.PARSE_TOPIC, fromBeginning: true });
         await consumer.run({
             eachMessage: async ({ message }) => {
-                handlePageParse(JSON.parse(message.value))
+                callback(JSON.parse(message.value));
             }
         });
     }
@@ -24,6 +27,11 @@ const initConsumer = async () => {
 };
 
 const producer = kafka.producer({ createPartitioner: Partitioners.LegacyPartitioner });
+
+/** sendMessage function args
+ * @param {string} topic - kafka topic name
+ * @param {Object} message - message object
+ */
 
 const sendMessage = async (topic, message) => {
     await producer.connect();

@@ -1,3 +1,4 @@
-const { initConsumer } = require("./consumer");
+const kafka = require("./kafka");
+const { handleVocing } = require("./voicer");
 
-initConsumer();
+kafka.initConsumer(handleVocing);
